@@ -1,19 +1,24 @@
 // Enemies our player must avoid
-var Enemy = function() {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
-
+var Enemy = function(sprite, x, y, speed) {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
-    this.sprite = 'images/enemy-bug.png';
+    this.sprite = sprite;
+    this.x = x;
+    this.y = y;
+    this.speed = speed;
 }
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
+    var newX = this.x + this.speed * dt;
+
+    if (newX < -board.blockSizeX)
+        this.x = board.width;
+    else if (newX > board.width)
+        this.x = -board.blockSizeX;
+    else
+        this.x += this.speed * dt;
 }
 
 // Draw the enemy on the screen, required method for game
@@ -25,12 +30,58 @@ Enemy.prototype.render = function() {
 // This class requires an update(), render() and
 // a handleInput() method.
 
+var Player = function(sprite, x, y) {
+    this.sprite = sprite;
+    this.x = x;
+    this.y = y;
+}
+
+Player.prototype.update = function(dt) {
+}
+
+Player.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
+Player.prototype.handleInput = function(direction) {
+    switch(direction) {
+        case 'left':
+            this.x = this.x - board.blockSizeX;
+            break;
+        case 'right':
+            this.x = this.x + board.blockSizeX;
+            break;
+        case 'up':
+            this.y = this.y - board.blockSizeY;
+            break;
+        case 'down':
+            this.y = this.y + board.blockSizeY;
+            break;
+    }
+}
+
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
+var allEnemies = [
+        new Enemy('images/enemy-bug-1.png',   0,  60,  60),
+        new Enemy('images/enemy-bug-1.png', 130,  60,  60),
+        new Enemy('images/enemy-bug-2.png', 500, 145, -90),
+        new Enemy('images/enemy-bug-2.png', 300, 145, -90),
+        new Enemy('images/enemy-bug-1.png',  60, 230, 210),
+        new Enemy('images/enemy-bug-1.png', 290, 230, 210)
+    ];
 
+var player = new Player('images/char-boy.png', 0, 200);
+
+var board = {
+    width: 505,
+    height: 606,
+    blockSizeX: 100,
+    blockSizeY: 75
+}
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
