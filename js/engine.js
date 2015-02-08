@@ -80,7 +80,7 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions();
     }
 
     /* This is called by the update function  and loops through all of the
@@ -95,6 +95,26 @@ var Engine = (function(global) {
             enemy.update(dt);
         });
         player.update();
+    }
+
+    /* This function checks if the player has collided with any enemies.
+     * When a collision is detected, the player is moved to its initial
+     * location.
+     */
+    function checkCollisions() {
+        var playerX = player.x;
+        var playerY = player.y;
+        var playerW = player.width;
+        function isTouchingPlayer(enemy) {
+            return playerY === enemy.y && playerX < enemy.x + enemy.width && playerX + playerW > enemy.x;
+        }
+        for (var i = allEnemies.length - 1; i >= 0; i--) {
+            if (isTouchingPlayer(allEnemies[i])) {
+                player.x = player.initialX;
+                player.y = player.initialY;
+                break;
+            }
+        };
     }
 
     /* This function initially draws the "game level", it will then call
@@ -116,15 +136,14 @@ var Engine = (function(global) {
                 'images/grass-block.png'    // Row 2 of 2 of grass
             ],
             numRows = 6,
-            numCols = 5,
-            row, col;
+            numCols = 5;
 
         /* Loop through the number of rows and columns we've defined above
          * and, using the rowImages array, draw the correct image for that
          * portion of the "grid"
          */
-        for (row = 0; row < numRows; row++) {
-            for (col = 0; col < numCols; col++) {
+        for (var row = 0; row < numRows; row++) {
+            for (var col = 0; col < numCols; col++) {
                 /* The drawImage function of the canvas' context element
                  * requires 3 parameters: the image to draw, the x coordinate
                  * to start drawing and the y coordinate to start drawing.
@@ -132,7 +151,7 @@ var Engine = (function(global) {
                  * so that we get the benefits of caching these images, since
                  * we're using them over and over.
                  */
-                ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
+                ctx.drawImage(Resources.get(rowImages[row]), col * board.blockSizeX, row * board.blockSizeY);
             }
         }
 
