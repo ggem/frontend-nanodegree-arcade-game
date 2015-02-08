@@ -34,6 +34,8 @@ var Player = function(sprite, x, y) {
     this.sprite = sprite;
     this.x = x;
     this.y = y;
+    this.limitX = board.width  - board.blockSizeX;
+    this.limitY = board.height - 200;
 }
 
 Player.prototype.update = function(dt) {
@@ -44,22 +46,19 @@ Player.prototype.render = function() {
 }
 
 Player.prototype.handleInput = function(direction) {
-    switch(direction) {
-        case 'left':
-            this.x = this.x - board.blockSizeX;
-            break;
-        case 'right':
-            this.x = this.x + board.blockSizeX;
-            break;
-        case 'up':
-            this.y = this.y - board.blockSizeY;
-            break;
-        case 'down':
-            this.y = this.y + board.blockSizeY;
-            break;
-    }
+    var dX = direction[0],
+        dY = direction[1];
+    this.x = Math.min(Math.max(this.x + dX,  0), this.limitX);
+    this.y = Math.min(Math.max(this.y + dY, -9), this.limitY);
 }
 
+
+var board = {
+    width: 505,
+    height: 606,
+    blockSizeX: 101,
+    blockSizeY: 83
+}
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
@@ -74,24 +73,18 @@ var allEnemies = [
         new Enemy('images/enemy-bug-1.png', 290, 230, 210)
     ];
 
-var player = new Player('images/char-boy.png', 0, 200);
-
-var board = {
-    width: 505,
-    height: 606,
-    blockSizeX: 100,
-    blockSizeY: 75
-}
+var player = new Player('images/char-boy.png', 202, 406);
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
-        37: 'left',
-        38: 'up',
-        39: 'right',
-        40: 'down'
+        37: [-board.blockSizeX, 0], // left
+        38: [0, -board.blockSizeY], // up
+        39: [board.blockSizeX, 0],  // right
+        40: [0, board.blockSizeY]   // down
     };
 
-    player.handleInput(allowedKeys[e.keyCode]);
+    var direction = allowedKeys[e.keyCode];
+    if (direction) player.handleInput(direction);
 });
