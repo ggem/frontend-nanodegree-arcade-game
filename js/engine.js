@@ -25,8 +25,8 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
-    canvas.width = board.width;
-    canvas.height = board.height;
+    canvas.width = board.WIDTH;
+    canvas.height = board.HEIGHT;
     doc.body.appendChild(canvas);
 
     /* This function serves as the kickoff point for the game loop itself
@@ -81,6 +81,7 @@ var Engine = (function(global) {
     function update(dt) {
         updateEntities(dt);
         checkCollisions();
+        checkWin();
     }
 
     /* This is called by the update function  and loops through all of the
@@ -110,11 +111,19 @@ var Engine = (function(global) {
         }
         for (var i = allEnemies.length - 1; i >= 0; i--) {
             if (isTouchingPlayer(allEnemies[i])) {
-                player.x = player.initialX;
-                player.y = player.initialY;
+                reset();
                 break;
             }
         };
+    }
+
+    /* This function checks if the player has reached the goal.  If that's the
+     * case, it resets the game.
+     */
+    function checkWin() {
+        if (player.y <= 57) {
+            reset();
+        }
     }
 
     /* This function initially draws the "game level", it will then call
@@ -151,7 +160,7 @@ var Engine = (function(global) {
                  * so that we get the benefits of caching these images, since
                  * we're using them over and over.
                  */
-                ctx.drawImage(Resources.get(rowImages[row]), col * board.blockSizeX, row * board.blockSizeY);
+                ctx.drawImage(Resources.get(rowImages[row]), col * board.BLOCKSIZE_X, row * board.BLOCKSIZE_Y);
             }
         }
 
@@ -179,7 +188,7 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // noop
+        player.resetPosition();
     }
 
     /* Go ahead and load all of the images we know we're going to need to

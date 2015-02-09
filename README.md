@@ -1,6 +1,10 @@
-frontend-nanodegree-arcade-game
-===============================
+# Frogger-Like-Arcade-Game #
 
-Students should use this rubric: https://www.udacity.com/course/viewer#!/c-ud015/l-3072058665/m-3072588797
+## Description ##
+This is a Frogger-like game, where the objective is to cross the road, being careful not to be stepped on by some giant ladybugs.
 
-for self-checking their submission.
+## Starting the Game
+Go to http://ggem.github.io/frontend-nanodegree-arcade-game
+
+## Movement ##
+Use the arrow keys to move your player.  Enjoy!
